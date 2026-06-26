@@ -1,0 +1,1 @@
+import { Award } from 'lucide-react'; export function PointsBadge({ points }: { points: number }) { return <div className="inline-flex items-center gap-2 rounded-md bg-accent px-3 py-2 text-sm font-semibold text-accent-foreground"><Award className="h-4 w-4" />{points} pts</div>; }

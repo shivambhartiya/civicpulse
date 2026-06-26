@@ -1,0 +1,4 @@
+import { distanceKm } from '@/lib/utils/geolocation';
+import type { DuplicateResult } from '@/lib/types/agents';
+import type { Issue } from '@/lib/types/issue';
+export async function checkForDuplicates(candidate: Pick<Issue, 'title' | 'description' | 'location' | 'category'>, nearby: Issue[] = []): Promise<DuplicateResult> { const duplicate = nearby.find((issue) => issue.category === candidate.category && distanceKm(issue.location, candidate.location) < 0.5 && (issue.title.toLowerCase().includes(candidate.title.toLowerCase().slice(0, 8)) || candidate.description.toLowerCase().includes(issue.description.toLowerCase().slice(0, 12)))); return duplicate ? { isDuplicate: true, duplicateIssueId: duplicate.id, confidence: 0.82, reasoning: 'Similar category and description within 500m geofence.' } : { isDuplicate: false, confidence: 0.74, reasoning: 'No nearby semantic or geographic duplicate found.' }; }

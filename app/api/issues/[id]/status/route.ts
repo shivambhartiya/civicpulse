@@ -1,0 +1,2 @@
+import { NextRequest, NextResponse } from 'next/server'; import { StatusUpdateSchema } from '@/lib/utils/validation';
+export async function PUT(req: NextRequest, { params }: { params: { id: string } }) { const parsed = StatusUpdateSchema.safeParse(await req.json()); if (!parsed.success) return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 }); return NextResponse.json({ issueId: params.id, status: parsed.data.status, note: parsed.data.note ?? 'Status updated by authority.' }); }

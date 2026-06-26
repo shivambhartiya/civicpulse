@@ -1,0 +1,2 @@
+import { NextRequest, NextResponse } from 'next/server'; import { CommentSchema } from '@/lib/utils/validation';
+export async function POST(req: NextRequest, { params }: { params: { id: string } }) { const parsed = CommentSchema.safeParse(await req.json()); if (!parsed.success) return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 }); return NextResponse.json({ issueId: params.id, comment: { id: 'comment-' + Date.now(), body: parsed.data.body, sentiment: 0.5 }, pointsAwarded: 5 }); }

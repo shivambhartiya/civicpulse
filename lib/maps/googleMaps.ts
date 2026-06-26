@@ -1,0 +1,3 @@
+interface GeocodeAddressComponent { long_name: string; types: string[]; }
+interface GeocodeResult { formatted_address?: string; address_components?: GeocodeAddressComponent[]; }
+export async function reverseGeocode(lat: number, lng: number) { const key = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY; if (!key) return { address: 'Demo civic district', ward: 'Ward 12' }; const res = await fetch('https://maps.googleapis.com/maps/api/geocode/json?latlng=' + lat + ',' + lng + '&key=' + key); const json = await res.json() as { results?: GeocodeResult[] }; return { address: json.results?.[0]?.formatted_address ?? 'Unknown address', ward: json.results?.[0]?.address_components?.find((c) => c.types.includes('administrative_area_level_3'))?.long_name ?? 'Unassigned ward' }; }

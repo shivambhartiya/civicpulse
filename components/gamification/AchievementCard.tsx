@@ -1,0 +1,2 @@
+import { Card, CardContent } from '@/components/ui/card'; import { Progress } from '@/components/ui/progress';
+export function AchievementCard({ name, description, progress }: { name: string; description: string; progress: number }) { return <Card><CardContent className="space-y-3 p-4"><p className="font-semibold">{name}</p><p className="text-sm text-muted-foreground">{description}</p><Progress value={progress} /></CardContent></Card>; }

@@ -1,0 +1,2 @@
+import { StatsGrid } from '@/components/dashboard/StatsGrid'; import { RecentIssues } from '@/components/dashboard/RecentIssues';
+export default function AdminPage() { return <div className="space-y-6"><div><p className="text-xs font-semibold uppercase tracking-wider text-primary">Authority console</p><h1 className="text-3xl font-semibold">Operational dashboard</h1></div><StatsGrid /><RecentIssues /></div>; }

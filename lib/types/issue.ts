@@ -1,0 +1,8 @@
+export type IssueCategory = 'POTHOLE' | 'WATER' | 'LIGHTING' | 'WASTE' | 'ROAD' | 'BUILDING' | 'OTHER';
+export type IssueStatus = 'REPORTED' | 'VERIFIED' | 'ASSIGNED' | 'IN_PROGRESS' | 'RESOLVED' | 'CLOSED';
+export type Department = 'Public Works' | 'Water Department' | 'Sanitation' | 'Power & Lighting' | 'Building Safety' | 'Traffic' | 'Civic Response';
+export interface GeoPointLike { lat: number; lng: number; address: string; ward: string; geohash?: string; }
+export interface StatusEvent { status: IssueStatus; at: string; by: string; note: string; }
+export interface IssueComment { id: string; authorId: string; authorName: string; body: string; createdAt: string; sentiment: number; }
+export interface IssueAIAnalysis { isIssue: boolean; confidence: number; suggestedTitle: string; suggestedDescription: string; suggestedCategory: IssueCategory; suggestedSubcategory: string; suggestedDepartment: Department; suggestedSeverity: number; detectedObjects: string[]; safetyAssessment: 'low' | 'medium' | 'high'; reasoning: string; communityAngerScore?: number; issueDna?: string; }
+export interface Issue { id: string; title: string; description: string; category: IssueCategory; subcategory: string; severity: number; images: string[]; thumbnailUrl: string; location: GeoPointLike; status: IssueStatus; statusHistory: StatusEvent[]; assignedTo: string | null; department: Department; slaDeadline: string; escalationLevel: number; reportedBy: string; reportedByName: string; reportedAt: string; verifiedBy: string[]; verificationCount: number; upvotes: number; upvotedBy: string[]; comments: IssueComment[]; aiAnalysis: IssueAIAnalysis; duplicateOf?: string | null; predictedRisk?: number; resolutionChallengedBy?: string[]; }

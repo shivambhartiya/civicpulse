@@ -1,0 +1,2 @@
+import { Badge } from '@/components/ui/badge'; import { CATEGORY_META } from '@/lib/constants/categories'; import type { IssueCategory } from '@/lib/types/issue';
+export function CategoryBadge({ category }: { category: IssueCategory }) { const meta = CATEGORY_META[category]; return <Badge variant="outline" className="gap-2"><span className="h-2 w-2 rounded-full" style={{ backgroundColor: meta.color }} />{meta.label}</Badge>; }

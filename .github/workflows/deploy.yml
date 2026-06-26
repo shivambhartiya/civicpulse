@@ -1,0 +1,14 @@
+name: Deploy CivicPulse
+on:
+  push:
+    branches: [main]
+jobs:
+  cloud-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SERVICE_ACCOUNT_JSON }}
+      - uses: google-github-actions/setup-gcloud@v2
+      - run: gcloud builds submit --config cloudbuild.yaml .

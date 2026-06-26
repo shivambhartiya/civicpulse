@@ -1,0 +1,2 @@
+import type { HotspotPrediction } from '@/lib/types/analytics';
+export function HeatmapLayer({ hotspots }: { hotspots: HotspotPrediction[] }) { return <div className="pointer-events-none absolute inset-0 overflow-hidden">{hotspots.map((hotspot, index) => <div key={hotspot.id} className="absolute rounded-full border border-civic-violet/40 bg-civic-violet/25 blur-sm" style={{ width: 110 + hotspot.risk, height: 110 + hotspot.risk, left: (18 + index * 28) + '%', top: (18 + index * 18) + '%' }} />)}</div>; }

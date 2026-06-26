@@ -1,0 +1,2 @@
+import { IssuesByCategory } from '@/components/dashboard/IssuesByCategory'; import { ResolutionTrend } from '@/components/dashboard/ResolutionTrend'; import { AIInsightBanner } from '@/components/dashboard/AIInsightBanner';
+export default function AdminAnalyticsPage() { return <div className="space-y-6"><h1 className="text-3xl font-semibold">Deep analytics and export</h1><AIInsightBanner /><div className="grid gap-6 xl:grid-cols-2"><IssuesByCategory /><ResolutionTrend /></div></div>; }

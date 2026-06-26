@@ -1,0 +1,2 @@
+import { AlertTriangle } from 'lucide-react'; import { CATEGORY_META } from '@/lib/constants/categories'; import type { Issue } from '@/lib/types/issue';
+export function IssueMarker({ issue }: { issue: Issue }) { const color = CATEGORY_META[issue.category].color; return <div className="grid h-9 w-9 place-items-center rounded-full border-2 border-white shadow-lg" style={{ backgroundColor: color }}><AlertTriangle className="h-4 w-4 text-white" /></div>; }

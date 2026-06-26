@@ -1,0 +1,2 @@
+import Link from 'next/link'; import { Button } from '@/components/ui/button'; import { Badge } from '@/components/ui/badge'; import type { Issue } from '@/lib/types/issue';
+export function IssuePopup({ issue }: { issue: Issue }) { return <div className="w-64 space-y-2 rounded-lg border bg-card p-3 shadow-lg"><Badge>{issue.status.replace('_', ' ')}</Badge><h3 className="font-semibold">{issue.title}</h3><p className="text-xs text-muted-foreground">{issue.location.address}</p><Button asChild size="sm"><Link href={'/issues/' + issue.id}>Open report</Link></Button></div>; }

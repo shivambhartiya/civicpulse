@@ -1,0 +1,2 @@
+import { Inbox } from 'lucide-react'; import { Card, CardContent } from '@/components/ui/card';
+export function EmptyState({ title, description }: { title: string; description: string }) { return <Card><CardContent className="flex flex-col items-center gap-3 py-12 text-center"><Inbox className="h-10 w-10 text-muted-foreground" /><div><h3 className="font-semibold">{title}</h3><p className="text-sm text-muted-foreground">{description}</p></div></CardContent></Card>; }

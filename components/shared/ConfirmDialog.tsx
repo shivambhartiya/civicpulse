@@ -1,0 +1,3 @@
+'use client';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'; import { Button } from '@/components/ui/button';
+export function ConfirmDialog({ trigger, title, onConfirm }: { trigger: React.ReactNode; title: string; onConfirm: () => void }) { return <Dialog><DialogTrigger asChild>{trigger}</DialogTrigger><DialogContent><DialogHeader><DialogTitle>{title}</DialogTitle></DialogHeader><div className="flex justify-end gap-2"><Button variant="outline">Cancel</Button><Button onClick={onConfirm}>Confirm</Button></div></DialogContent></Dialog>; }

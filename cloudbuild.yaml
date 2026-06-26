@@ -1,0 +1,23 @@
+steps:
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '-t', 'us-central1-docker.pkg.dev/$PROJECT_ID/civicpulse/app:$COMMIT_SHA', '.']
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'us-central1-docker.pkg.dev/$PROJECT_ID/civicpulse/app:$COMMIT_SHA']
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: gcloud
+    args:
+      - 'run'
+      - 'deploy'
+      - 'civicpulse'
+      - '--image=us-central1-docker.pkg.dev/$PROJECT_ID/civicpulse/app:$COMMIT_SHA'
+      - '--region=us-central1'
+      - '--platform=managed'
+      - '--allow-unauthenticated'
+      - '--memory=1Gi'
+      - '--cpu=1'
+      - '--min-instances=1'
+      - '--max-instances=10'
+      - '--set-secrets=GEMINI_API_KEY=gemini-api-key:latest'
+      - '--set-env-vars=NODE_ENV=production'
+images:
+  - 'us-central1-docker.pkg.dev/$PROJECT_ID/civicpulse/app:$COMMIT_SHA'

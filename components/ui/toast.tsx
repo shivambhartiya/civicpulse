@@ -1,0 +1,4 @@
+'use client'; import * as ToastPrimitive from '@radix-ui/react-toast'; import { cn } from '@/lib/utils';
+export const ToastProvider = ToastPrimitive.Provider; export const ToastViewport = ({ className, ...props }: React.ComponentPropsWithoutRef<typeof ToastPrimitive.Viewport>) => <ToastPrimitive.Viewport className={cn('fixed bottom-0 right-0 z-50 flex max-h-screen w-full flex-col-reverse p-4 sm:max-w-sm', className)} {...props} />;
+export const Toast = ({ className, ...props }: React.ComponentPropsWithoutRef<typeof ToastPrimitive.Root>) => <ToastPrimitive.Root className={cn('rounded-md border bg-card p-4 shadow-lg', className)} {...props} />;
+export const ToastTitle = ToastPrimitive.Title; export const ToastDescription = ToastPrimitive.Description; export const ToastClose = ToastPrimitive.Close;

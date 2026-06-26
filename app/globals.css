@@ -1,27 +1,6 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
-}
-
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
-  }
-}
+@layer base { :root { --background: 190 30% 98%; --foreground: 206 39% 12%; --card: 0 0% 100%; --card-foreground: 206 39% 12%; --popover: 0 0% 100%; --popover-foreground: 206 39% 12%; --primary: 174 75% 36%; --primary-foreground: 174 100% 97%; --secondary: 210 26% 92%; --secondary-foreground: 206 39% 15%; --muted: 206 22% 92%; --muted-foreground: 205 18% 39%; --accent: 73 72% 53%; --accent-foreground: 206 39% 12%; --destructive: 351 84% 60%; --destructive-foreground: 0 0% 100%; --border: 203 22% 85%; --input: 203 22% 85%; --ring: 174 75% 36%; --radius: 0.5rem; } .dark { --background: 205 36% 8%; --foreground: 190 36% 96%; --card: 204 32% 11%; --card-foreground: 190 36% 96%; --popover: 204 32% 11%; --popover-foreground: 190 36% 96%; --primary: 174 72% 45%; --primary-foreground: 205 36% 8%; --secondary: 203 25% 17%; --secondary-foreground: 190 36% 96%; --muted: 203 25% 17%; --muted-foreground: 196 14% 70%; --accent: 74 72% 55%; --accent-foreground: 205 36% 8%; --destructive: 351 84% 60%; --destructive-foreground: 0 0% 100%; --border: 203 24% 20%; --input: 203 24% 20%; --ring: 174 72% 45%; } * { @apply border-border; } body { @apply bg-background text-foreground antialiased; } button, a, input, textarea, select { @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background; } }
+.map-grid { background-image: linear-gradient(rgba(20,184,166,.15) 1px, transparent 1px), linear-gradient(90deg, rgba(20,184,166,.15) 1px, transparent 1px); background-size: 36px 36px; }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; transition-duration: .01ms !important; } }
