@@ -1,4 +1,16 @@
-import type { Metadata } from 'next'; import { Inter } from 'next/font/google'; import 'leaflet/dist/leaflet.css'; import './globals.css';
-const inter = Inter({ subsets: ['latin'] });
-export const metadata: Metadata = { title: 'CivicPulse', description: 'Your city. Your voice. Real change.', manifest: '/manifest.json' };
-export default function RootLayout({ children }: { children: React.ReactNode }) { return <html lang="en" className="dark"><body className={inter.className}>{children}</body></html>; }
+import type { Metadata } from 'next';
+import './globals.css';
+
+export const metadata: Metadata = {
+  title: 'CivicPulse',
+  description: 'Your city. Your voice. Real change.',
+  manifest: '/manifest.json'
+};
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <html lang="en" className="dark">
+      <body>{children}</body>
+    </html>
+  );
+}
