@@ -1,8 +1,0 @@
-{
-  "indexes": [
-    { "collectionGroup": "issues", "queryScope": "COLLECTION", "fields": [{ "fieldPath": "location.geohash", "order": "ASCENDING" }, { "fieldPath": "status", "order": "ASCENDING" }] },
-    { "collectionGroup": "issues", "queryScope": "COLLECTION", "fields": [{ "fieldPath": "status", "order": "ASCENDING" }, { "fieldPath": "severity", "order": "DESCENDING" }, { "fieldPath": "reportedAt", "order": "DESCENDING" }] },
-    { "collectionGroup": "issues", "queryScope": "COLLECTION", "fields": [{ "fieldPath": "department", "order": "ASCENDING" }, { "fieldPath": "status", "order": "ASCENDING" }, { "fieldPath": "slaDeadline", "order": "ASCENDING" }] }
-  ],
-  "fieldOverrides": []
-}

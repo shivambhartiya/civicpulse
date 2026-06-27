@@ -1,7 +1,33 @@
 'use client';
+
 import { useEffect, useState } from 'react';
-import { collection, limit, onSnapshot, orderBy, query } from 'firebase/firestore';
-import { db } from '@/lib/firebase/config';
-import { mockIssues } from '@/lib/mock-data';
 import type { Issue } from '@/lib/types/issue';
-export function useIssues() { const [issues, setIssues] = useState<Issue[]>(mockIssues); const [loading, setLoading] = useState(false); useEffect(() => { if (!db) return; setLoading(true); return onSnapshot(query(collection(db, 'issues'), orderBy('reportedAt', 'desc'), limit(50)), (snap) => { setIssues(snap.docs.map((d) => ({ id: d.id, ...d.data() } as Issue))); setLoading(false); }, () => setLoading(false)); }, []); return { issues, loading }; }
+
+export function useIssues() {
+  const [issues, setIssues] = useState<Issue[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<Error | null>(null);
+
+  useEffect(() => {
+    let active = true;
+    fetch('/api/issues')
+      .then(async (response) => {
+        if (!response.ok) throw new Error('Could not load issues.');
+        return response.json() as Promise<{ issues: Issue[] }>;
+      })
+      .then((result) => {
+        if (active) setIssues(result.issues);
+      })
+      .catch((caught) => {
+        if (active) setError(caught instanceof Error ? caught : new Error('Could not load issues.'));
+      })
+      .finally(() => {
+        if (active) setLoading(false);
+      });
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  return { issues, loading, error };
+}
