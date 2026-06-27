@@ -1,14 +1,86 @@
-name: Deploy CivicPulse
+name: CivicPulse CI and Cloud Build
+
 on:
   push:
     branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
 jobs:
-  cloud-build:
+  verify:
+    name: Verify app
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: google-github-actions/auth@v2
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Type-check
+        run: npm run type-check
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Build
+        run: npm run build
+
+  cloud-build:
+    name: Cloud Build deploy
+    runs-on: ubuntu-latest
+    needs: verify
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Detect Google Cloud credentials
+        id: gcp-auth
+        shell: bash
+        env:
+          GCP_SERVICE_ACCOUNT_JSON: ${{ secrets.GCP_SERVICE_ACCOUNT_JSON }}
+          GCP_WORKLOAD_IDENTITY_PROVIDER: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          GCP_SERVICE_ACCOUNT_EMAIL: ${{ secrets.GCP_SERVICE_ACCOUNT_EMAIL }}
+        run: |
+          if [[ -n "$GCP_WORKLOAD_IDENTITY_PROVIDER" && -n "$GCP_SERVICE_ACCOUNT_EMAIL" ]]; then
+            echo "mode=workload_identity" >> "$GITHUB_OUTPUT"
+          elif [[ -n "$GCP_SERVICE_ACCOUNT_JSON" ]]; then
+            echo "mode=service_account_json" >> "$GITHUB_OUTPUT"
+          else
+            echo "mode=skip" >> "$GITHUB_OUTPUT"
+            echo "::notice::Skipping Cloud Build deploy because no Google Cloud credentials are configured. Add GCP_SERVICE_ACCOUNT_JSON, or add both GCP_WORKLOAD_IDENTITY_PROVIDER and GCP_SERVICE_ACCOUNT_EMAIL."
+          fi
+
+      - name: Authenticate with Google Cloud using Workload Identity
+        if: steps.gcp-auth.outputs.mode == 'workload_identity'
+        uses: google-github-actions/auth@v3
+        with:
+          workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ secrets.GCP_SERVICE_ACCOUNT_EMAIL }}
+
+      - name: Authenticate with Google Cloud using service account JSON
+        if: steps.gcp-auth.outputs.mode == 'service_account_json'
+        uses: google-github-actions/auth@v3
         with:
           credentials_json: ${{ secrets.GCP_SERVICE_ACCOUNT_JSON }}
-      - uses: google-github-actions/setup-gcloud@v2
-      - run: gcloud builds submit --config cloudbuild.yaml .
+
+      - name: Setup gcloud
+        if: steps.gcp-auth.outputs.mode != 'skip'
+        uses: google-github-actions/setup-gcloud@v3
+
+      - name: Submit Cloud Build
+        if: steps.gcp-auth.outputs.mode != 'skip'
+        run: gcloud builds submit --config cloudbuild.yaml .
+
+      - name: Deployment skipped
+        if: steps.gcp-auth.outputs.mode == 'skip'
+        run: echo "Cloud Build deploy skipped. App verification passed; configure Google Cloud secrets when you are ready to deploy."
