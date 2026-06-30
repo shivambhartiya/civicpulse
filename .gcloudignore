@@ -1,0 +1,13 @@
+.git
+.github
+.next
+node_modules
+out
+build
+.civicpulse-data
+.env*
+!.env.example
+gha-creds-*.json
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*

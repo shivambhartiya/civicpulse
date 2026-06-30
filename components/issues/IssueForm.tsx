@@ -11,7 +11,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Textarea } from '@/components/ui/textarea';
 import { LocationPicker } from '@/components/map/LocationPicker';
 import { PhotoUploader } from '@/components/shared/PhotoUploader';
+import { DEFAULT_CITY_CENTER } from '@/lib/constants/app';
 import { ISSUE_CATEGORIES } from '@/lib/constants/categories';
+import { POINTS } from '@/lib/constants/scoring';
 import type { IssueCategory } from '@/lib/types/issue';
 import { useReportStore } from '@/store/reportStore';
 
@@ -96,6 +98,43 @@ export function IssueForm() {
     }
   }
 
+  function useCurrentLocation() {
+    setError(null);
+    if (!navigator.geolocation) {
+      setFormData({
+        location: {
+          ...DEFAULT_CITY_CENTER,
+          address: 'Current civic district',
+          ward: formData.location?.ward ?? 'Ward 12',
+        },
+      });
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        setFormData({
+          location: {
+            lat: position.coords.latitude,
+            lng: position.coords.longitude,
+            address: 'GPS adjusted location',
+            ward: formData.location?.ward ?? 'Ward 12',
+          },
+        });
+      },
+      () => {
+        setFormData({
+          location: {
+            ...DEFAULT_CITY_CENTER,
+            address: 'Current civic district',
+            ward: formData.location?.ward ?? 'Ward 12',
+          },
+        });
+      },
+      { enableHighAccuracy: true, timeout: 8000 },
+    );
+  }
+
   return (
     <Card>
       <CardHeader>
@@ -123,8 +162,8 @@ export function IssueForm() {
             </div> : null}
             {step === 2 && formData.location ? <div className="space-y-4">
               <LocationPicker value={formData.location} onChange={(location) => setFormData({ location })} />
-              <Button onClick={submit} className="w-full" disabled={isSubmitting}>{isSubmitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Check className="h-4 w-4" />}Submit and earn 50 points</Button>
-              <Button variant="outline" onClick={() => setFormData({ location: { lat: 12.9716, lng: 77.5946, address: 'GPS adjusted location', ward: 'Ward 12' } })}><LocateFixed className="h-4 w-4" />Use current location</Button>
+              <Button onClick={submit} className="w-full" disabled={isSubmitting}>{isSubmitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Check className="h-4 w-4" />}Submit and earn {POINTS.report} points</Button>
+              <Button variant="outline" onClick={useCurrentLocation}><LocateFixed className="h-4 w-4" />Use current location</Button>
             </div> : null}
             {error ? <p className="rounded-md border border-destructive/30 bg-destructive/10 p-3 text-sm text-destructive">{error}</p> : null}
           </motion.div>

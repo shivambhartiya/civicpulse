@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import * as geofire from 'geofire-common';
 import { checkForDuplicates } from '@/lib/gemini/agents/duplicateAgent';
+import { POINTS } from '@/lib/constants/scoring';
 import { getRequestUser } from '@/lib/local-data/session';
 import { createIssue, getDemoUser, listIssues } from '@/lib/local-data/store';
 import type { IssueAIAnalysis } from '@/lib/types/issue';
@@ -68,5 +69,5 @@ export async function POST(request: NextRequest) {
     duplicateOf: duplicate.duplicateIssueId ?? null,
   });
 
-  return NextResponse.json({ issue, duplicate, pointsAwarded: 50 }, { status: 201 });
+  return NextResponse.json({ issue, duplicate, pointsAwarded: POINTS.report }, { status: 201 });
 }

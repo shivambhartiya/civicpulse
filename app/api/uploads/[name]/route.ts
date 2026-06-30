@@ -12,15 +12,16 @@ const contentTypes: Record<string, string> = {
   '.gif': 'image/gif',
 };
 
-export async function GET(_: Request, { params }: { params: { name: string } }) {
-  if (!/^[a-f0-9-]+\.(jpg|png|webp|gif)$/i.test(params.name)) {
+export async function GET(_: Request, { params }: { params: Promise<{ name: string }> }) {
+  const { name } = await params;
+  if (!/^[a-f0-9-]+\.(jpg|png|webp|gif)$/i.test(name)) {
     return NextResponse.json({ error: 'Invalid upload path.' }, { status: 400 });
   }
   try {
-    const data = await readFile(path.join(await getUploadsDirectory(), params.name));
+    const data = await readFile(path.join(await getUploadsDirectory(), name));
     return new NextResponse(new Uint8Array(data), {
       headers: {
-        'Content-Type': contentTypes[path.extname(params.name).toLowerCase()] || 'application/octet-stream',
+        'Content-Type': contentTypes[path.extname(name).toLowerCase()] || 'application/octet-stream',
         'Cache-Control': 'public, max-age=31536000, immutable',
         'X-Content-Type-Options': 'nosniff',
       },

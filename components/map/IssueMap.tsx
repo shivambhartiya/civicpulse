@@ -9,56 +9,15 @@ import {
 } from '@vis.gl/react-google-maps';
 import { formatDistanceToNow } from 'date-fns';
 import { ArrowUpRight, AlertTriangle } from 'lucide-react';
-
-// Category color mapping. Includes current app enums and production aliases.
-const CATEGORY_COLORS: Record<string, string> = {
-  POTHOLE:      '#92400E',
-  ROAD:         '#5B21B6',
-  WATER_LEAK:   '#1D4ED8',
-  WATER:        '#1D4ED8',
-  STREETLIGHT:  '#D97706',
-  LIGHTING:     '#D97706',
-  WASTE:        '#065F46',
-  ROAD_DAMAGE:  '#5B21B6',
-  BUILDING:     '#9F1239',
-  FLOODING:     '#1E40AF',
-  SEWAGE:       '#065F46',
-  OTHER:        '#4B5563',
-};
-
-// Status border width
-const STATUS_RING: Record<string, number> = {
-  REPORTED:    2,
-  VERIFIED:    3,
-  ASSIGNED:    3,
-  IN_PROGRESS: 4,
-  RESOLVED:    1,
-  CLOSED:      1,
-};
-
-const STATUS_LABEL: Record<string, string> = {
-  REPORTED:    'Reported',
-  VERIFIED:    'Verified',
-  ASSIGNED:    'Assigned',
-  IN_PROGRESS: 'In Progress',
-  RESOLVED:    'Resolved',
-  CLOSED:      'Closed',
-};
-
-const STATUS_COLOR: Record<string, string> = {
-  REPORTED:    '#6366F1',
-  VERIFIED:    '#F59E0B',
-  ASSIGNED:    '#3B82F6',
-  IN_PROGRESS: '#8B5CF6',
-  RESOLVED:    '#10B981',
-  CLOSED:      '#6B7280',
-};
+import { CATEGORY_META } from '@/lib/constants/categories';
+import { STATUS_META } from '@/lib/constants/status';
+import type { IssueCategory, IssueStatus } from '@/lib/types/issue';
 
 interface MapIssue {
   id: string;
   title: string;
-  category: string;
-  status: string;
+  category: IssueCategory;
+  status: IssueStatus;
   severity: number;
   location: { lat: number; lng: number; address: string };
   reportedAt: Date;
@@ -76,8 +35,8 @@ interface IssueMapProps {
 
 // Custom SVG pin
 function IssuePin({ issue, isSelected }: { issue: MapIssue; isSelected: boolean }) {
-  const color = CATEGORY_COLORS[issue.category] ?? '#4B5563';
-  const ring = STATUS_RING[issue.status] ?? 2;
+  const color = CATEGORY_META[issue.category].color;
+  const ring = STATUS_META[issue.status].ring;
   const size = isSelected ? 38 : issue.severity >= 8 ? 34 : 28;
 
   return (
@@ -130,8 +89,8 @@ function IssuePin({ issue, isSelected }: { issue: MapIssue; isSelected: boolean 
 
 // Info popup
 function IssuePopup({ issue, onClose }: { issue: MapIssue; onClose: () => void }) {
-  const statusColor = STATUS_COLOR[issue.status] ?? '#6B7280';
-  const catColor = CATEGORY_COLORS[issue.category] ?? '#4B5563';
+  const status = STATUS_META[issue.status];
+  const category = CATEGORY_META[issue.category];
 
   return (
     <InfoWindow
@@ -152,7 +111,7 @@ function IssuePopup({ issue, onClose }: { issue: MapIssue; onClose: () => void }
         {/* Category header strip */}
         <div
           style={{
-            background: catColor,
+            background: category.color,
             padding: '8px 12px',
             color: 'white',
             display: 'flex',
@@ -164,7 +123,7 @@ function IssuePopup({ issue, onClose }: { issue: MapIssue; onClose: () => void }
             textTransform: 'uppercase',
           }}
         >
-          <span>{issue.category.replace('_', ' ')}</span>
+          <span>{category.label}</span>
           <span
             style={{
               background: 'rgba(255,255,255,0.25)',
@@ -207,15 +166,15 @@ function IssuePopup({ issue, onClose }: { issue: MapIssue; onClose: () => void }
           >
             <span
               style={{
-                background: `${statusColor}18`,
-                color: statusColor,
+                background: `${status.color}18`,
+                color: status.color,
                 padding: '2px 8px',
                 borderRadius: 9999,
                 fontSize: 11,
                 fontWeight: 600,
               }}
             >
-              {STATUS_LABEL[issue.status]}
+              {status.label}
             </span>
             <span style={{ color: '#94A3B8', fontSize: 12 }}>
               {issue.verificationCount} verifications

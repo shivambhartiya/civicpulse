@@ -5,20 +5,16 @@ steps:
       - '-c'
       - |
         docker build \
-          --build-arg NEXT_PUBLIC_GOOGLE_MAPS_API_KEY="$$NEXT_PUBLIC_GOOGLE_MAPS_API_KEY" \
-          --build-arg NEXT_PUBLIC_GOOGLE_MAPS_ID="$$NEXT_PUBLIC_GOOGLE_MAPS_ID" \
-          --build-arg NEXT_PUBLIC_APP_URL="$$NEXT_PUBLIC_APP_URL" \
-          -t us-central1-docker.pkg.dev/$PROJECT_ID/civicpulse/app:$COMMIT_SHA \
+          --build-arg NEXT_PUBLIC_GOOGLE_MAPS_API_KEY="${_NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}" \
+          --build-arg NEXT_PUBLIC_GOOGLE_MAPS_ID="${_NEXT_PUBLIC_GOOGLE_MAPS_ID}" \
+          --build-arg NEXT_PUBLIC_APP_URL="${_NEXT_PUBLIC_APP_URL}" \
+          -t ${_REGION}-docker.pkg.dev/$PROJECT_ID/civicpulse/app:$COMMIT_SHA \
           .
-    secretEnv:
-      - NEXT_PUBLIC_GOOGLE_MAPS_API_KEY
-      - NEXT_PUBLIC_GOOGLE_MAPS_ID
-      - NEXT_PUBLIC_APP_URL
 
   - name: 'gcr.io/cloud-builders/docker'
     args:
       - 'push'
-      - 'us-central1-docker.pkg.dev/$PROJECT_ID/civicpulse/app:$COMMIT_SHA'
+      - '${_REGION}-docker.pkg.dev/$PROJECT_ID/civicpulse/app:$COMMIT_SHA'
 
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     entrypoint: gcloud
@@ -26,25 +22,21 @@ steps:
       - 'run'
       - 'deploy'
       - 'civicpulse'
-      - '--image=us-central1-docker.pkg.dev/$PROJECT_ID/civicpulse/app:$COMMIT_SHA'
-      - '--region=us-central1'
+      - '--image=${_REGION}-docker.pkg.dev/$PROJECT_ID/civicpulse/app:$COMMIT_SHA'
+      - '--region=${_REGION}'
       - '--platform=managed'
       - '--allow-unauthenticated'
       - '--memory=1Gi'
       - '--cpu=1'
       - '--min-instances=0'
       - '--max-instances=1'
-      - '--set-secrets=GEMINI_API_KEY=gemini-api-key:latest'
       - '--set-env-vars=NODE_ENV=production,CIVICPULSE_DATA_DIR=/tmp/civicpulse-data'
 
 images:
-  - 'us-central1-docker.pkg.dev/$PROJECT_ID/civicpulse/app:$COMMIT_SHA'
+  - '${_REGION}-docker.pkg.dev/$PROJECT_ID/civicpulse/app:$COMMIT_SHA'
 
-availableSecrets:
-  secretManager:
-    - versionName: projects/$PROJECT_ID/secrets/next-public-google-maps-api-key/versions/latest
-      env: NEXT_PUBLIC_GOOGLE_MAPS_API_KEY
-    - versionName: projects/$PROJECT_ID/secrets/next-public-google-maps-id/versions/latest
-      env: NEXT_PUBLIC_GOOGLE_MAPS_ID
-    - versionName: projects/$PROJECT_ID/secrets/next-public-app-url/versions/latest
-      env: NEXT_PUBLIC_APP_URL
+substitutions:
+  _REGION: us-central1
+  _NEXT_PUBLIC_GOOGLE_MAPS_API_KEY: ''
+  _NEXT_PUBLIC_GOOGLE_MAPS_ID: ''
+  _NEXT_PUBLIC_APP_URL: ''
